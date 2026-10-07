@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pembelajaran Interaktif Surah An-Naba' - MTsN 3 Gorontalo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Amiri (Arabic) & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f0fdf4;
+        }
+        .font-arabic {
+            font-family: 'Amiri', serif;
+            line-height: 2.3;
+        }
+        .tajwid-ghunnah { color: #2563eb; font-weight: bold; background-color: #dbeafe; padding: 2px 6px; border-radius: 4px; }
+        .tajwid-qalqalah { color: #dc2626; font-weight: bold; background-color: #fee2e2; padding: 2px 6px; border-radius: 4px; }
+        .tajwid-mad { color: #16a34a; font-weight: bold; background-color: #dcfce7; padding: 2px 6px; border-radius: 4px; }
+        .tajwid-ikhfa { color: #9333ea; font-weight: bold; background-color: #f3e8ff; padding: 2px 6px; border-radius: 4px; }
+        .tajwid-idgham { color: #ea580c; font-weight: bold; background-color: #ffedd5; padding: 2px 6px; border-radius: 4px; }
+        
+        .tab-active {
+            background-color: #047857;
+            color: white;
+            box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);
+        }
+        .hafalan-text {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-emerald-50/50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header App -->
+    <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/10 p-3 rounded-2xl backdrop-blur-md border border-white/20">
+                    <i class="fa-solid font-bold fa-book-quran text-3xl text-amber-300"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold tracking-wider bg-amber-400/20 text-amber-200 px-2.5 py-0.5 rounded-full border border-amber-300/30">MULOK KELAS 9</span>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Media Pembelajaran Al-Qur'an Interaktif</h1>
+                    <p class="text-xs text-emerald-100 flex items-center gap-2">
+                        <span><i class="fa-solid fa-school text-emerald-300"></i> MTs N 3 Kab. Gorontalo</span> | 
+                        <span><i class="fa-solid fa-user-tie text-amber-300"></i> Guru: Abdul Waris Mobonggi, S.Ag</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Surah Selector -->
+            <div class="bg-emerald-900/60 p-2 rounded-xl border border-emerald-500/30 flex items-center gap-2">
+                <label for="surahSelect" class="text-xs font-medium text-emerald-200 pl-2"><i class="fa-solid fa-list text-amber-300"></i> Pilih Surah:</label>
+                <select id="surahSelect" onchange="changeSurah(this.value)" class="bg-emerald-950 text-white text-sm font-semibold rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-amber-400 outline-none border border-emerald-600">
+                    <option value="naba" selected>Surah An-Naba' (40 Ayat)</option>
+                    <option value="naziat" disabled>Surah An-Nazi'at (Segera Hadir)</option>
+                    <option value="abasa" disabled>Surah 'Abasa (Segera Hadir)</option>
+                    <option value="takwir" disabled>Surah At-Takwir (Segera Hadir)</option>
+                    <option value="infitar" disabled>Surah Al-Infitar (Segera Hadir)</option>
+                    <option value="mutaffifin" disabled>Surah Al-Mutaffifin (Segera Hadir)</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="bg-white border-b border-emerald-100 sticky top-[80px] z-40 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 flex overflow-x-auto gap-2 py-2 scrollbar-none">
+            <button onclick="switchTab('baca')" id="tab-baca" class="tab-btn tab-active px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-book-open"></i> Baca & Terjemahan
+            </button>
+            <button onclick="switchTab('tajwid')" id="tab-tajwid" class="tab-btn text-slate-600 hover:bg-emerald-50 px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-highlighter text-purple-600"></i> Hukum Tajwid
+            </button>
+            <button onclick="switchTab('hafalan')" id="tab-hafalan" class="tab-btn text-slate-600 hover:bg-emerald-50 px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-brain text-amber-500"></i> Metode Hafalan
+            </button>
+            <button onclick="switchTab('asbab')" id="tab-asbab" class="tab-btn text-slate-600 hover:bg-emerald-50 px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Asbab Nuzul
+            </button>
+            <button onclick="switchTab('makhraj')" id="tab-makhraj" class="tab-btn text-slate-600 hover:bg-emerald-50 px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-microphone-lines text-teal-600"></i> Cara Membaca & Makhraj
+            </button>
+            <button onclick="switchTab('kuis')" id="tab-kuis" class="tab-btn text-slate-600 hover:bg-emerald-50 px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition-all">
+                <i class="fa-solid fa-pen-to-square text-rose-500"></i> Kuis & Presensi
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+        <!-- TAB 1: BACA & TERJEMAHAN -->
+        <section id="section-baca" class="tab-section space-y-6">
+            <!-- Surah Info Box -->
+            <div id="surah-header-baca" class="bg-gradient-to-br from-emerald-700 to-teal-800 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden text-center">
+                <div class="relative z-10">
+                    <span class="bg-amber-400/20 text-amber-300 text-xs px-3 py-1 rounded-full border border-amber-300/30 uppercase tracking-widest font-bold">Makkiyah • Surah Ke-78</span>
+                    <h2 id="surah-title" class="text-3xl font-bold mt-2">سُورَةُ النَّبَإِ</h2>
+                    <p id="surah-subtitle" class="text-emerald-100 text-sm mt-1">Surah An-Naba' (Berita Besar) • 40 Ayat</p>
+                    
+                    <!-- Audio Player Main -->
+                    <div class="mt-4 flex justify-center items-center gap-3">
+                        <button id="mainAudioBtn" onclick="toggleMainAudio()" class="bg-amber-400 hover:bg-amber-300 text-emerald-950 font-bold px-5 py-2.5 rounded-full shadow-md transition-all flex items-center gap-2 text-sm">
+                            <i id="mainAudioIcon" class="fa-solid fa-play"></i> Putar Murottal Surah
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Ayat -->
+            <div id="ayat-container" class="space-y-4">
+                <!-- Dynamic Content Generated via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: HUKUM TAJWID -->
+        <section id="section-tajwid" class="tab-section hidden space-y-6">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-emerald-100">
+                <h3 class="text-lg font-bold text-emerald-900 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-swatchbook text-purple-600"></i> Panduan Warna Hukum Tajwid
+                </h3>
+                <p class="text-xs text-slate-600 mb-4">Klik atau perhatikan lafaz berwarna untuk mengetahui kaidah pembacaannya dalam Surah An-Naba':</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-xs">
+                    <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-center">
+                        <span class="tajwid-ghunnah block mb-1">Ghunnah</span>
+                        <span class="text-[10px] text-slate-500">Mendengung 2 harakat</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-red-50 border border-red-200 text-center">
+                        <span class="tajwid-qalqalah block mb-1">Qalqalah</span>
+                        <span class="text-[10px] text-slate-500">Memantulkan suara</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-green-50 border border-green-200 text-center">
+                        <span class="tajwid-mad block mb-1">Mad / Mad 'Iwadh</span>
+                        <span class="text-[10px] text-slate-500">Panjang 2-6 harakat</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-center">
+                        <span class="tajwid-ikhfa block mb-1">Ikhfa Haqiqi</span>
+                        <span class="text-[10px] text-slate-500">Samar & mendengung</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-center">
+                        <span class="tajwid-idgham block mb-1">Idgham Bighunnah</span>
+                        <span class="text-[10px] text-slate-500">Lebur masuk mendengung</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Tajweed Verses Container -->
+            <div id="tajwid-ayat-container" class="space-y-4">
+                <!-- Dynamic Content JS -->
+            </div>
+        </section>
+
+        <!-- TAB 3: METODE HAFALAN -->
+        <section id="section-hafalan" class="tab-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-amber-500 to-emerald-700 text-white p-6 rounded-3xl shadow-md">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-amber-200"></i> Mode Latihan Hafalan Mandiri Surah An-Naba'
+                </h3>
+                <p class="text-xs text-amber-100 mt-1">Gunakan slider kontrol di bawah untuk menyembunyikan sebagian atau seluruh lafaz Arab guna menguji hafalan Anda!</p>
+                
+                <div class="mt-4 bg-white/10 p-4 rounded-2xl backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="w-full md:w-1/2">
+                        <label class="text-xs font-semibold block mb-1 text-amber-200">Tingkat Penyamaran Teks (Blur Hafalan):</label>
+                        <input type="range" id="hafalanBlurSlider" min="0" max="100" value="0" oninput="adjustHafalanBlur(this.value)" class="w-full accent-amber-400">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setHafalanPreset(0)" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-xs font-semibold rounded-lg">Tampilkan Semua</button>
+                        <button onclick="setHafalanPreset(50)" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-xs font-semibold rounded-lg">Samar 50%</button>
+                        <button onclick="setHafalanPreset(100)" class="px-3 py-1.5 bg-amber-400 text-emerald-950 font-bold text-xs rounded-lg shadow-sm">Sembunyikan Semua</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="hafalan-ayat-container" class="space-y-4">
+                <!-- Dynamic Hafalan Cards -->
+            </div>
+        </section>
+
+        <!-- TAB 4: ASBAB NUZUL -->
+        <section id="section-asbab" class="tab-section hidden space-y-6">
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-emerald-100 space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div class="p-3 bg-blue-100 text-blue-700 rounded-2xl">
+                        <i class="fa-solid fa-scroll text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 id="asbab-title" class="text-xl font-bold text-slate-800">Asbab Nuzul Surah An-Naba'</h3>
+                        <p class="text-xs text-slate-500">Latar Belakang Diturunkannya Surah Tentang Berita Hari Kiamat</p>
+                    </div>
+                </div>
+
+                <div id="asbab-content" class="prose prose-emerald max-w-none text-slate-700 leading-relaxed text-sm space-y-4">
+                    <!-- Dynamic Asbab Content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: CARA MEMBACA & MAKHRAJ -->
+        <section id="section-makhraj" class="tab-section hidden space-y-6">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-emerald-100 space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div class="p-3 bg-teal-100 text-teal-700 rounded-2xl">
+                        <i class="fa-solid fa-microphone-lines text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Panduan Tartil & Makhraj Surah An-Naba'</h3>
+                        <p class="text-xs text-slate-500">Petunjuk membaca tajwid dan makhraj khusus dalam Surah An-Naba'</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="p-4 rounded-2xl bg-teal-50/60 border border-teal-100 space-y-2">
+                        <span class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-sm">1</span>
+                        <h4 class="font-bold text-teal-900 text-sm">Hukum Mad 'Iwadh (Akhir Ayat)</h4>
+                        <p class="text-xs text-slate-600">Hampir seluruh akhir ayat Surah An-Naba' berakhiran tanwin fathah (ً). Saat waqaf, dibaca Mad 'Iwadh dipanjangkan 2 harakat (Contoh: مِهَادًا dibaca <em>Mihādā</em>).</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-teal-50/60 border border-teal-100 space-y-2">
+                        <span class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-sm">2</span>
+                        <h4 class="font-bold text-teal-900 text-sm">Ghunnah Musyaddadah</h4>
+                        <p class="text-xs text-slate-600">Tekan dan dengungkan selama 2 harakat pada huruf Nun atau Mim bertasydid seperti pada lafaz (عَمَّ) dan (إِنَّ).</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-teal-50/60 border border-teal-100 space-y-2">
+                        <span class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-sm">3</span>
+                        <h4 class="font-bold text-teal-900 text-sm">Qalqalah Sugra & Kubra</h4>
+                        <p class="text-xs text-slate-600">Perhatikan pantulan jelas namun ringan pada huruf-huruf Qalqalah sukun di tengah kata seperti (نَجْعَلِ) dan (أَوْتَادًا).</p>
+                    </div>
+                </div>
+
+                <div id="makhraj-tips-container" class="space-y-4">
+                    <!-- Dynamic Makhraj Tips -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: KUIS & PRESENSI -->
+        <section id="section-kuis" class="tab-section hidden space-y-6">
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Left: Quiz Box -->
+                <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-emerald-100 space-y-6">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">Kuis Evaluasi Surah An-Naba'</h3>
+                            <p class="text-xs text-slate-500">Jawab pertanyaan berikut untuk menguji pemahaman Anda</p>
+                        </div>
+                        <span id="quiz-score-badge" class="bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full text-xs">Skor: 0 / 100</span>
+                    </div>
+
+                    <!-- Dynamic Quiz Container -->
+                    <div id="quiz-container" class="space-y-6">
+                        <!-- Questions rendered via JS -->
+                    </div>
+
+                    <button onclick="evaluateQuiz()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> Selesai & Hitung Skor
+                    </button>
+                </div>
+
+                <!-- Right: Submission Form for Google Sheets -->
+                <div class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white p-6 rounded-3xl shadow-lg h-fit space-y-4">
+                    <div class="border-b border-emerald-700 pb-3">
+                        <h3 class="text-lg font-bold flex items-center gap-2 text-amber-300">
+                            <i class="fa-solid fa-paper-plane"></i> Form Kirim Nilai & Absensi
+                        </h3>
+                        <p class="text-xs text-emerald-200 mt-0.5">Data akan otomatis terrekam ke Google Sheet Guru</p>
+                    </div>
+
+                    <!-- Web App API Endpoint Config -->
+                    <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-700/50 space-y-1">
+                        <label class="text-[11px] text-amber-200 font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-link"></i> URL Apps Script Web API:
+                        </label>
+                        <input type="text" id="apiUrlInput" placeholder="Masukkan URL Deployment Web App di sini..." 
+                               class="w-full text-xs bg-emerald-900 text-emerald-100 px-3 py-2 rounded-lg border border-emerald-600 focus:outline-none focus:ring-1 focus:ring-amber-300">
+                        <span class="text-[10px] text-emerald-300 italic block">Penting: Masukkan URL Web App Google Apps Script Anda!</span>
+                    </div>
+
+                    <form id="attendanceForm" onsubmit="submitDataToGoogleSheet(event)" class="space-y-3 text-xs">
+                        <div>
+                            <label class="font-semibold text-emerald-100 block mb-1">Nama Lengkap Siswa:</label>
+                            <input type="text" id="inputNama" required placeholder="Contoh: Ahmad Mohamad" class="w-full px-3 py-2.5 rounded-xl text-slate-800 focus:ring-2 focus:ring-amber-400 outline-none">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="font-semibold text-emerald-100 block mb-1">Kelas:</label>
+                                <select id="inputKelas" class="w-full px-3 py-2.5 rounded-xl text-slate-800 focus:ring-2 focus:ring-amber-400 outline-none font-semibold">
+                                    <option value="IX-A">Kelas 9A</option>
+                                    <option value="IX-B">Kelas 9B</option>
+                                    <option value="IX-C">Kelas 9C</option>
+                                    <option value="IX-D">Kelas 9D</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="font-semibold text-emerald-100 block mb-1">No. Absen:</label>
+                                <input type="number" id="inputNoAbsen" min="1" max="40" required placeholder="1-40" class="w-full px-3 py-2.5 rounded-xl text-slate-800 focus:ring-2 focus:ring-amber-400 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="font-semibold text-emerald-100 block mb-1">Skor Kuis Terakhir:</label>
+                            <input type="text" id="inputSkor" readonly value="Belum Kuis" class="w-full px-3 py-2.5 rounded-xl bg-emerald-950/80 text-amber-300 font-bold outline-none border border-emerald-700">
+                        </div>
+
+                        <div>
+                            <label class="font-semibold text-emerald-100 block mb-1">Catatan / Refleksi Hafalan Siswa:</label>
+                            <textarea id="inputRefleksi" rows="3" placeholder="Tuliskan perkembangan hafalan Surah An-Naba' atau kendala membaca..." class="w-full px-3 py-2 rounded-xl text-slate-800 focus:ring-2 focus:ring-amber-400 outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" id="submitBtn" class="w-full bg-amber-400 hover:bg-amber-300 text-emerald-950 font-extrabold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm mt-2">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim Presensi & Nilai
+                        </button>
+                    </form>
+
+                    <!-- Status Indicator -->
+                    <div id="statusMessage" class="hidden p-3 rounded-xl text-xs font-semibold text-center"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Tajweed Explanation Modal -->
+    <div id="tajwidModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl transform transition-all">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h4 id="modalTajwidTitle" class="font-bold text-lg text-emerald-900">Penjelasan Hukum Tajwid</h4>
+                <button onclick="closeTajwidModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+            </div>
+            <div id="modalTajwidBody" class="text-xs text-slate-700 leading-relaxed space-y-2">
+                <!-- Dynamic Modal Info -->
+            </div>
+            <button onclick="closeTajwidModal()" class="w-full bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-emerald-950 text-emerald-300/80 text-xs py-6 border-t border-emerald-800/50 mt-8">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-3 text-center md:text-left">
+            <div>
+                <p class="font-bold text-emerald-100">Media Pembelajaran Mulok MTs N 3 Kab. Gorontalo</p>
+                <p class="text-[11px] text-emerald-400/80">Guru Mata Pelajaran: Abdul Waris Mobonggi, S.Ag</p>
+            </div>
+            <div class="text-[11px]">
+                <p>Dikembangkan oleh: <span class="font-semibold text-amber-300">Abdul Rahman Utina, M.Pd.</span></p>
+                <p>&copy; 2026 Hak Cipta Dilindungi Undang-Undang</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Database Material Surah An-Naba' (40 Ayat Lengkap)
+        const surahData = {
+            naba: {
+                title: "سُورَةُ النَّبَإِ",
+                subtitle: "Surah An-Naba' (Berita Besar) • 40 Ayat",
+                audioUrl: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/78.mp3",
+                asbab: `
+                    <p><strong>Sebab Diturunkannya Surah An-Naba':</strong></p>
+                    <p>Diriwayatkan oleh Ibnu Jarir dan Ibnu Abi Hatim dari Al-Hasan Al-Bashri, ketika Nabi Muhammad SAW diutus dan menyampaikan wahyu Al-Qur'an tentang Hari Kebangkitan (Kiamat), kaum musyrikin Quraisy saling bertanya-tana dan meragukan kebenaran berita tersebut dengan nada mengejek dan penuh keheranan.</p>
+                    <p>Maka Allah SWT menurunkan Surah An-Naba' untuk menjawab keheranan mereka dan menegaskan bahwa Hari Kiamat dan Hari Balasan adalah berita yang sangat besar (<em>An-Naba' al-'Azim</em>) serta pasti terjadi tanpa keraguan sedikit pun. Allah juga menyebutkan berbagai bukti kekuasaan-Nya di alam semesta sebagai bukti kekuasaan-Nya menghidupkan kembali manusia setelah mati.</p>
+                `,
+                makhrajTips: [
+                    { title: "Huruf Hamzah & 'Ain (ع - ء)", desc: "Dengarkan perbedaan tajam antara huruf 'Ain di kata 'Amma (عَمَّ) dari tengah tenggorokan dengan Hamzah di kata An-Naba' (النَّبَإِ) dari pangkal tenggorokan." },
+                    { title: "Mad 'Iwadh di Seluruh Akhir Ayat", desc: "Hampir seluruh akhir ayat Surah An-Naba' diwakafkan dengan membaca Mad 'Iwadh (membaca fathah panjang 2 harakat sebagai pengganti tanwin fathah)." },
+                    { title: "Ghunnah Musyaddadah di Kata 'Amma (عَمَّ)", desc: "Pastikan membaca Mim bertasydid dengan menahannya selama 2 harakat sebelum melanjutkan ke kata Yatasā'alūn." }
+                ],
+                ayat: [
+                    { no: 1, arabic: "عَمَّ يَتَسَاءَلُونَ", latin: "'Amma yatasā'alūn(a).", indo: "Tentang apakah mereka saling bertanya-tanya?", words: [{ ar: "عَمَّ", tr: "Tentang apakah" }, { ar: "يَتَسَاءَلُونَ", tr: "mereka saling bertanya-tanya" }], tajwid: [{ text: "عَمَّ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah (Mim bertasydid mendengung 2 harakat)." }, { text: "يَتَسَاءَلُونَ", type: "tajwid-mad", info: "Mad Wajib Muttashil (panjang 4-5 harakat) & Mad 'Arid Lissukun saat waqaf." }] },
+                    { no: 2, arabic: "عَنِ النَّبَإِ الْعَظِيمِ", latin: "'Anin-naba'il-'aẓīm(i).", indo: "Tentang berita yang besar (hari berbangkit),", words: [{ ar: "عَنِ", tr: "Dari/Tentang" }, { ar: "النَّبَإِ", tr: "berita" }, { ar: "الْعَظِيمِ", tr: "yang besar" }], tajwid: [{ text: "النَّبَإِ", type: "tajwid-ghunnah", info: "Alif Lam Syamsiyah & Ghunnah pada Nun bertasydid." }, { text: "الْعَظِيمِ", type: "tajwid-mad", info: "Mad 'Arid Lissukun." }] },
+                    { no: 3, arabic: "الَّذِي هُمْ فِيهِ مُخْتَلِفُونَ", latin: "Allażī hum fīhi mukhtalifūn(a).", indo: "yang dalam hal itu mereka berselisih.", words: [{ ar: "الَّذِي", tr: "Yang" }, { ar: "هُمْ فِيهِ", tr: "mereka padanya" }, { ar: "مُخْتَلِفُونَ", tr: "berselisih" }], tajwid: [{ text: "الَّذِي", type: "tajwid-mad", info: "Mad Thabi'i." }, { text: "مُخْتَلِفُونَ", type: "tajwid-mad", info: "Mad 'Arid Lissukun." }] },
+                    { no: 4, arabic: "كَلَّا سَيَعْلَمُونَ", latin: "Kallā saya'lamūn(a).", indo: "Sekali-kali tidak! Kelak mereka akan mengetahui,", words: [{ ar: "كَلَّا", tr: "Sekali-kali tidak!" }, { ar: "سَيَعْلَمُونَ", tr: "kelak mereka akan mengetahui" }], tajwid: [{ text: "كَلَّا", type: "tajwid-mad", info: "Mad Thabi'i." }, { text: "سَيَعْلَمُونَ", type: "tajwid-mad", info: "Mad 'Arid Lissukun." }] },
+                    { no: 5, arabic: "ثُمَّ كَلَّا سَيَعْلَمُونَ", latin: "Ṡumma kallā saya'lamūn(a).", indo: "kemudian sekali-kali tidak! Kelak mereka akan mengetahui.", words: [{ ar: "ثُمَّ", tr: "Kemudian" }, { ar: "كَلَّا", tr: "sekali-kali tidak!" }, { ar: "سَيَعْلَمُونَ", tr: "kelak mereka akan mengetahui" }], tajwid: [{ text: "ثُمَّ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah pada Mim bertasydid." }, { text: "سَيَعْلَمُونَ", type: "tajwid-mad", info: "Mad 'Arid Lissukun." }] },
+                    { no: 6, arabic: "أَلَمْ نَجْعَلِ الْأَرْضَ مِهَادًا", latin: "Alam naj'alil-arḍa mihādā(n).", indo: "Bukankah Kami telah menjadikan bumi sebagai hamparan,", words: [{ ar: "أَلَمْ نَجْعَلِ", tr: "Bukankah Kami menjadikan" }, { ar: "الْأَرْضَ", tr: "bumi" }, { ar: "مِهَادًا", tr: "sebagai hamparan" }], tajwid: [{ text: "نَجْعَلِ", type: "tajwid-qalqalah", info: "Qalqalah Sugra pada Jim sukun." }, { text: "مِهَادًا", type: "tajwid-mad", info: "Mad 'Iwadh dibaca panjang 2 harakat saat waqaf." }] },
+                    { no: 7, arabic: "وَالْجِبَالَ أَوْتَادًا", latin: "Wal-jibāla awtādā(n).", indo: "dan gunung-gunung sebagai pasak?", words: [{ ar: "وَالْجِبَالَ", tr: "Dan gunung-gunung" }, { ar: "أَوْتَادًا", tr: "sebagai pasak" }], tajwid: [{ text: "أَوْتَادًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 8, arabic: "وَخَلَقْنَاكُمْ أَزْوَاجًا", latin: "Wa khalaqnākum azwājā(n).", indo: "dan Kami menciptakan kamu berpasang-pasangan,", words: [{ ar: "وَخَلَقْنَاكُمْ", tr: "Dan Kami ciptakan kamu" }, { ar: "أَزْوَاجًا", tr: "berpasang-pasangan" }], tajwid: [{ text: "وَخَلَقْنَاكُمْ", type: "tajwid-qalqalah", info: "Qalqalah Sugra pada Qaf sukun." }, { text: "أَزْوَاجًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 9, arabic: "وَجَعَلْنَا نَوْمَكُمْ سُبَاتًا", latin: "Wa ja'alnā naumakum subātā(n).", indo: "dan Kami menjadikan tidurmu untuk istirahat,", words: [{ ar: "وَجَعَلْنَا", tr: "Dan Kami jadikan" }, { ar: "نَوْمَكُمْ", tr: "tidurmu" }, { ar: "سُبَاتًا", tr: "untuk istirahat" }], tajwid: [{ text: "سُبَاتًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 10, arabic: "وَجَعَلْنَا اللَّيْلَ لِبَاسًا", latin: "Wa ja'alnal-laila libāsā(n).", indo: "dan Kami menjadikan malam sebagai pakaian,", words: [{ ar: "وَجَعَلْنَا", tr: "Dan Kami jadikan" }, { ar: "اللَّيْلَ", tr: "malam" }, { ar: "لِبَاسًا", tr: "sebagai pakaian" }], tajwid: [{ text: "لِبَاسًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 11, arabic: "وَجَعَلْنَا النَّهَارَ مَعَاشًا", latin: "Wa ja'alnan-nahāra ma'āshā(n).", indo: "dan Kami menjadikan siang untuk mencari penghidupan,", words: [{ ar: "النَّهَارَ", tr: "Siang hari" }, { ar: "مَعَاشًا", tr: "untuk penghidupan" }], tajwid: [{ text: "النَّهَارَ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah pada Nun bertasydid." }, { text: "مَعَاشًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 12, arabic: "وَبَنَيْنَا فَوْقَكُمْ سَبْعًا شِدَادًا", latin: "Wa banainā fauqakum sab'an shidādā(n).", indo: "dan Kami membangun di atas kamu tujuh (langit) yang kokoh,", words: [{ ar: "وَبَنَيْنَا", tr: "Dan Kami bangun" }, { ar: "فَوْقَكُمْ", tr: "di atas kamu" }, { ar: "سَبْعًا شِدَادًا", tr: "tujuh (langit) yang kokoh" }], tajwid: [{ text: "سَبْعًا", type: "tajwid-qalqalah", info: "Qalqalah Sugra pada Ba sukun." }, { text: "سَبْعًا شِدَادًا", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi (Tanwin bertemu Syin)." }] },
+                    { no: 13, arabic: "وَجَعَلْنَا سِرَاجًا وَهَّاجًا", latin: "Wa ja'alnā sirājaw-wahhājā(n).", indo: "dan Kami menjadikan pelita yang terang benderang (matahari),", words: [{ ar: "وَجَعَلْنَا", tr: "Dan Kami jadikan" }, { ar: "سِرَاجًا وَهَّاجًا", tr: "pelita terang benderang" }], tajwid: [{ text: "سِرَاجًا وَهَّاجًا", type: "tajwid-idgham", info: "Idgham Bighunnah (Tanwin bertemu Wau)." }] },
+                    { no: 14, arabic: "وَأَنْزَلْنَا مِنَ الْمُعْصِرَاتِ مَاءً ثَجَّاجًا", latin: "Wa anzalnā minal-mu'ṣirāti mā'an ṡajjājā(n).", indo: "dan Kami menurunkan dari awan air hujan yang tercurah lebat,", words: [{ ar: "وَأَنْزَلْنَا", tr: "Dan Kami turunkan" }, { ar: "مِنَ الْمُعْصِرَاتِ", tr: "dari awan" }, { ar: "مَاءً ثَجَّاجًا", tr: "air tercurah lebat" }], tajwid: [{ text: "وَأَنْزَلْنَا", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi (Nun sukun bertemu Zai)." }, { text: "مَاءً ثَجَّاجًا", type: "tajwid-ikhfa", info: "Mad Wajib Muttashil & Ikhfa Haqiqi (Tanwin bertemu Tsa)." }] },
+                    { no: 15, arabic: "لِنُخْرِجَ بِهِ حَبًّا وَنَبَاتًا", latin: "Li nukhrija bihī ḥabbaw-wa nabātā(n).", indo: "untuk Kami tumbuhkan dengan air itu biji-bijian dan tanam-tanaman,", words: [{ ar: "لِنُخْرِجَ بِهِ", tr: "Untuk Kami tumbuhkan dengannya" }, { ar: "حَبًّا وَنَبَاتًا", tr: "biji-bijian dan tanaman" }], tajwid: [{ text: "حَبًّا وَنَبَاتًا", type: "tajwid-idgham", info: "Idgham Bighunnah (Tanwin bertemu Wau)." }] },
+                    { no: 16, arabic: "وَجَنَّاتٍ أَلْفَافًا", latin: "Wa jannātin alfāfā(n).", indo: "dan kebun-kebun yang rindang.", words: [{ ar: "وَجَنَّاتٍ", tr: "Dan kebun-kebun" }, { ar: "أَلْفَافًا", tr: "yang rindang" }], tajwid: [{ text: "وَجَنَّاتٍ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah pada Nun bertasydid." }, { text: "أَلْفَافًا", type: "tajwid-mad", info: "Izhar Halqi pada tanwin bertemu Alif & Mad 'Iwadh saat waqaf." }] },
+                    { no: 17, arabic: "إِنَّ يَوْمَ الْفَصْلِ كَانَ مِيقَاتًا", latin: "Inna yaumal-faṣli kāna mīqātā(n).", indo: "Sungguh, hari keputusan adalah suatu waktu yang telah ditetapkan,", words: [{ ar: "إِنَّ", tr: "Sungguh" }, { ar: "يَوْمَ الْفَصْلِ", tr: "hari keputusan" }, { ar: "كَانَ مِيقَاتًا", tr: "adalah waktu yang ditentukan" }], tajwid: [{ text: "إِنَّ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah." }, { text: "مِيقَاتًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 18, arabic: "يَوْمَ يُنْفَخُ فِي الصُّورِ فَتَأْتُونَ أَفْوَاجًا", latin: "Yauma yunfakhu fiṣ-ṣūri fa ta'tūna afwājā(n).", indo: "(yaitu) pada hari (ketika) sangkakala ditiup, lalu kamu datang berbondong-bondong,", words: [{ ar: "يَوْمَ يُنْفَخُ", tr: "Hari ditiup" }, { ar: "فِي الصُّورِ", tr: "pada sangkakala" }, { ar: "فَتَأْتُونَ أَفْوَاجًا", tr: "lalu kamu datang berbondong-bondong" }], tajwid: [{ text: "يُنْفَخُ", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi (Nun sukun bertemu Fa)." }, { text: "أَفْوَاجًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 19, arabic: "وَفُتِحَتِ السَّمَاءُ فَكَانَتْ أَبْوَابًا", latin: "Wa futiḥatis-samā'u fa kānat abwābā(n).", indo: "dan langit pun dibuka, maka terdapatlah beberapa pintu,", words: [{ ar: "وَفُتِحَتِ السَّمَاءُ", tr: "Dan dibukalah langit" }, { ar: "فَكَانَتْ أَبْوَابًا", tr: "maka jadilah ia pintu-pintu" }], tajwid: [{ text: "السَّمَاءُ", type: "tajwid-mad", info: "Mad Wajib Muttashil." }, { text: "أَبْوَابًا", type: "tajwid-qalqalah", info: "Qalqalah Sugra pada Ba sukun & Mad 'Iwadh." }] },
+                    { no: 20, arabic: "وَسُيِّرَتِ الْجِبَالُ فَكَانَتْ سَرَابًا", latin: "Wa suyyiratil-jibālu fa kānat sarābā(n).", indo: "dan gunung-gunung pun dijalankan sehingga menjadi fatamorgana.", words: [{ ar: "وَسُيِّرَتِ الْجِبَالُ", tr: "Dan dijalankan gunung-gunung" }, { ar: "فَكَانَتْ سَرَابًا", tr: "maka jadilah fatamorgana" }], tajwid: [{ text: "سَرَابًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 21, arabic: "إِنَّ جَهَنَّمَ كَانَتْ مِرْصَادًا", latin: "Inna jahannama kānat mirṣādā(n).", indo: "Sungguh, (neraka) Jahanam itu (sebagai) tempat mengintai,", words: [{ ar: "إِنَّ جَهَنَّمَ", tr: "Sungguh neraka Jahanam" }, { ar: "كَانَتْ مِرْصَادًا", tr: "adalah tempat mengintai" }], tajwid: [{ text: "إِنَّ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah." }, { text: "جَهَنَّمَ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah." }, { text: "مِرْصَادًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 22, arabic: "لِلطَّاغِينَ مَآبًا", latin: "Liṭ-ṭāgīna ma'ābā(n).", indo: "menjadi tempat kembali bagi orang-orang yang melampaui batas.", words: [{ ar: "لِلطَّاغِينَ", tr: "Bagi orang yang melampaui batas" }, { ar: "مَآبًا", tr: "sebagai tempat kembali" }], tajwid: [{ text: "مَآبًا", type: "tajwid-mad", info: "Mad Badal pada Mâ & Mad 'Iwadh pada akhir." }] },
+                    { no: 23, arabic: "لَابِثِينَ فِيهَا أَحْقَابًا", latin: "Lābiṡīna fīhā aḥqābā(n).", indo: "Mereka tinggal di dalamnya berabad-abad lamanya,", words: [{ ar: "لَابِثِينَ فِيهَا", tr: "Tinggal mereka di dalamnya" }, { ar: "أَحْقَابًا", tr: "berabad-abad" }], tajwid: [{ text: "فِيهَا أَحْقَابًا", type: "tajwid-mad", info: "Mad Ja'iz Munfashil & Mad 'Iwadh." }] },
+                    { no: 24, arabic: "لَا يَذُوقُونَ فِيهَا بَرْدًا وَلَا شَرَابًا", latin: "Lā yażūqūna fīhā bardaw-wa lā sharābā(n).", indo: "mereka tidak merasakan kesejukan di dalamnya dan tidak (pula mendapat) minuman,", words: [{ ar: "لَا يَذُوقُونَ", tr: "Tidak merasakan mereka" }, { ar: "بَرْدًا وَلَا شَرَابًا", tr: "kesejukan dan tidak pula minuman" }], tajwid: [{ text: "بَرْدًا وَلَا", type: "tajwid-idgham", info: "Idgham Bighunnah (Tanwin bertemu Wau)." }] },
+                    { no: 25, arabic: "إِلَّا حَمِيمًا وَغَسَّاقًا", latin: "Illā ḥamīmaw-wa gassāqā(n).", indo: "selain air yang mendidih dan nanah,", words: [{ ar: "إِلَّا حَمِيمًا", tr: "Kecuali air mendidih" }, { ar: "وَغَسَّاقًا", tr: "dan nanah" }], tajwid: [{ text: "حَمِيمًا وَغَسَّاقًا", type: "tajwid-idgham", info: "Idgham Bighunnah." }] },
+                    { no: 26, arabic: "جَزَاءً وَفَاقًا", latin: "Jazā'aw-wifāqā(n).", indo: "sebagai pembalasan yang setimpal.", words: [{ ar: "جَزَاءً", tr: "Pembalasan" }, { ar: "وَفَاقًا", tr: "yang setimpal" }], tajwid: [{ text: "جَزَاءً", type: "tajwid-mad", info: "Mad Wajib Muttashil." }, { text: "جَزَاءً وَفَاقًا", type: "tajwid-idgham", info: "Idgham Bighunnah." }] },
+                    { no: 27, arabic: "إِنَّهُمْ كَانُوا لَا يَرْجُونَ حِسَابًا", latin: "Innahum kānū lā yarjūna ḥisābā(n).", indo: "Sungguh, dahulu mereka tidak pernah mengharapkan perhitungan,", words: [{ ar: "إِنَّهُمْ", tr: "Sungguh mereka" }, { ar: "لَا يَرْجُونَ حِسَابًا", tr: "tidak takut perhitungan" }], tajwid: [{ text: "إِنَّهُمْ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah." }, { text: "حِسَابًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 28, arabic: "وَكَذَّبُوا بِآيَاتِنَا كِذَّابًا", latin: "Wa każżabū bi'āyātinā kiżżābā(n).", indo: "dan mereka benar-benar mendustakan ayat-ayat Kami.", words: [{ ar: "وَكَذَّبُوا", tr: "Dan mereka mendustakan" }, { ar: "بِآيَاتِنَا كِذَّابًا", tr: "ayat Kami dengan sesungguhnya" }], tajwid: [{ text: "بِآيَاتِنَا", type: "tajwid-mad", info: "Mad Badal & Mad Thabi'i." }] },
+                    { no: 29, arabic: "وَكُلَّ شَيْءٍ أَحْصَيْنَاهُ كِتَابًا", latin: "Wa kulla shai'in aḥṣaināhu kitābā(n).", indo: "Dan segala sesuatu telah Kami catat dalam suatu Kitab (buku catatan amal).", words: [{ ar: "وَكُلَّ شَيْءٍ", tr: "Dan segala sesuatu" }, { ar: "أَحْصَيْنَاهُ كِتَابًا", tr: "Kami catat dalam kitab" }], tajwid: [{ text: "شَيْءٍ أَحْصَيْنَاهُ", type: "tajwid-mad", info: "Izhar Halqi (Tanwin bertemu Hamzah)." }] },
+                    { no: 30, arabic: "فَذُوقُوا فَلَنْ نَزِيدَكُمْ إِلَّا عَذَابًا", latin: "Fa żūqū falan nazīdakum illā 'ażābā(n).", indo: "Maka rasakanlah! Maka Kami tidak akan menambah kepadamu selain azab.", words: [{ ar: "فَذُوقُوا", tr: "Maka rasakanlah" }, { ar: "فَلَنْ نَزِيدَكُمْ", tr: "maka tidak Kami tambah" }, { ar: "إِلَّا عَذَابًا", tr: "kecuali azab" }], tajwid: [{ text: "فَلَنْ نَزِيدَكُمْ", type: "tajwid-idgham", info: "Idgham Bighunnah (Nun sukun bertemu Nun)." }] },
+                    { no: 31, arabic: "إِنَّ لِلْمُتَّقِينَ مَفَازًا", latin: "Inna lil-muttaqīna mafāzā(n).", indo: "Sungguh, orang-orang yang bertakwa mendapat kemenangan,", words: [{ ar: "إِنَّ", tr: "Sungguh" }, { ar: "لِلْمُتَّقِينَ", tr: "bagi orang yang bertakwa" }, { ar: "مَفَازًا", tr: "mendapat kemenangan" }], tajwid: [{ text: "إِنَّ", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah." }, { text: "مَفَازًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 32, arabic: "حَدَائِقَ وَأَعْنَابًا", latin: "Ḥadā'iqa wa a'nābā(n).", indo: "(yaitu) kebun-kebun dan buah anggur,", words: [{ ar: "حَدَائِقَ", tr: "Kebun-kebun" }, { ar: "وَأَعْنَابًا", tr: "dan buah anggur" }], tajwid: [{ text: "حَدَائِقَ", type: "tajwid-mad", info: "Mad Wajib Muttashil." }, { text: "وَأَعْنَابًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 33, arabic: "وَكَوَاعِبَ أَتْرَابًا", latin: "Wa kawā'iba atrābā(n).", indo: "dan gadis-gadis remaja yang sebaya,", words: [{ ar: "وَكَوَاعِبَ", tr: "Dan gadis-gadis" }, { ar: "أَتْرَابًا", tr: "yang sebaya" }], tajwid: [{ text: "أَتْرَابًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 34, arabic: "وَكَأْسًا دِهَاقًا", latin: "Wa ka'san dihāqā(n).", indo: "dan gelas-gelas yang penuh (berisi minuman).", words: [{ ar: "وَكَأْسًا", tr: "Dan gelas-gelas" }, { ar: "دِهَاقًا", tr: "yang penuh" }], tajwid: [{ text: "وَكَأْسًا دِهَاقًا", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi (Tanwin bertemu Dal)." }] },
+                    { no: 35, arabic: "لَا يَسْمَعُونَ فِيهَا لَغْوًا وَلَا كِذَّابًا", latin: "Lā yasma'ūna fīhā lagwaw-wa lā kiżżābā(n).", indo: "Di sana mereka tidak mendengar percakapan yang sia-sia dan tidak (pula) perkataan dusta.", words: [{ ar: "لَا يَسْمَعُونَ فِيهَا", tr: "Tidak mereka mendengar di sana" }, { ar: "لَغْوًا وَلَا كِذَّابًا", tr: "perkataan sia-sia dan tidak pula dusta" }], tajwid: [{ text: "لَغْوًا وَلَا", type: "tajwid-idgham", info: "Idgham Bighunnah." }] },
+                    { no: 36, arabic: "جَزَاءً مِنْ رَبِّكَ عَطَاءً حِسَابًا", latin: "Jazā'am-mir-rabbika 'aṭā'an ḥisābā(n).", indo: "Sebagai balasan dan pemberian yang cukup dari Tuhanmu,", words: [{ ar: "جَزَاءً مِنْ", tr: "Sebagai balasan dari" }, { ar: "رَبِّكَ", tr: "Tuhanmu" }, { ar: "عَطَاءً حِسَابًا", tr: "pemberian yang cukup" }], tajwid: [{ text: "جَزَاءً مِنْ", type: "tajwid-idgham", info: "Mad Wajib Muttashil & Idgham Bighunnah." }, { text: "مِنْ رَبِّكَ", type: "tajwid-idgham", info: "Idgham Bilaghunnah (Nun sukun bertemu Ra)." }, { text: "عَطَاءً حِسَابًا", type: "tajwid-mad", info: "Mad Wajib Muttashil & Izhar Halqi (Tanwin bertemu Ha)." }] },
+                    { no: 37, arabic: "رَبِّ السَّمَاوَاتِ وَالْأَرْضِ وَمَا بَيْنَهُمَا الرَّحْمَٰنِ ۖ لَا يَمْلِكُونَ مِنْهُ خِطَابًا", latin: "Rabbis-samāwāti wal-arḍi wa mā bainahumar-raḥmāni lā yamlikūna minhu khiṭābā(n).", indo: "Tuhan langit dan bumi dan apa yang ada di antara keduanya; Yang Maha Pengasih, mereka tidak mampu berbicara dengan-Nya.", words: [{ ar: "رَبِّ السَّمَاوَاتِ", tr: "Tuhan pencipta langit" }, { ar: "وَالْأَرْضِ", tr: "dan bumi" }, { ar: "الرَّحْمَٰنِ", tr: "Yang Maha Pengasih" }], tajwid: [{ text: "مِنْهُ", type: "tajwid-mad", info: "Izhar Halqi (Nun sukun bertemu Ha)." }, { text: "خِطَابًا", type: "tajwid-mad", info: "Mad 'Iwadh." }] },
+                    { no: 38, arabic: "يَوْمَ يَقُومُ الرُّوحُ وَالْمَلَائِكَةُ صَفًّا ۖ لَا يَتَكَلَّمُونَ إِلَّا مَنْ أَذِنَ لَهُ الرَّحْمَٰنُ وَقَالَ صَوَابًا", latin: "Yauma yaqūmur-rūḥu wal-malā'ikatu ṣaffāl-lā yatakallamūna illā man ażina lahur-raḥmānu wa qāla ṣawābā(n).", indo: "Pada hari, ketika ruh dan para malaikat berdiri bersaf-saf, mereka tidak berkata-kata, kecuali siapa yang telah diberi izin kepadanya oleh Tuhan Yang Maha Pengasih; dan dia mengucapkan kata yang benar.", words: [{ ar: "يَوْمَ يَقُومُ الرُّوحُ", tr: "Pada hari berdiri Ruh (Jibril)" }, { ar: "وَالْمَلَائِكَةُ صَفًّا", tr: "dan para malaikat bersaf-saf" }], tajwid: [{ text: "وَالْمَلَائِكَةُ", type: "tajwid-mad", info: "Mad Wajib Muttashil." }, { text: "مَنْ أَذِنَ", type: "tajwid-mad", info: "Izhar Halqi (Nun sukun bertemu Hamzah)." }] },
+                    { no: 39, arabic: "ذَٰلِكَ الْيَوْمُ الْحَقُّ ۖ فَمَنْ شَاءَ اتَّخَذَ إِلَىٰ رَبِّهِ مَآبًا", latin: "Żālikal-yaumul-ḥaqqu fa man shā'at-takhaża ilā rabbihī ma'ābā(n).", indo: "Itulah hari yang pasti terjadi. Maka barangsiapa menghendaki, niscaya dia mengambil tempat kembali kepada Tuhannya.", words: [{ ar: "ذَٰلِكَ الْيَوْمُ الْحَقُّ", tr: "Itulah hari yang pasti" }, { ar: "فَمَنْ شَاءَ", tr: "maka barangsiapa menghendaki" }], tajwid: [{ text: "فَمَنْ شَاءَ", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi & Mad Wajib Muttashil." }] },
+                    { no: 40, arabic: "إِنَّا أَنْذَرْنَاكُمْ عَذَابًا قَرِيبًا يَوْمَ يَنْظُرُ الْمَرْءُ مَا قَدَّمَتْ يَدَاهُ وَيَقُولُ الْكَافِرُ يَا لَيْتَنِي كُنْتُ تُرَابًا", latin: "Innā anżarnākum 'ażāban qarībay-yauma yanẓurul-mar'u mā qaddamat yadāhu wa yaqūlul-kāfiru yā laitanī kuntu turābā(n).", indo: "Sungguh, Kami telah memperingatkan kepadamu (wahai orang kafir) azab yang dekat, pada hari manusia melihat apa yang telah diperbuat oleh kedua tangannya; dan orang kafir berkata, 'Betapa senangnya jikalau aku dahulu menjadi tanah.'", words: [{ ar: "إِنَّا أَنْذَرْنَاكُمْ", tr: "Sungguh Kami memperingatkan kalian" }, { ar: "عَذَابًا قَرِيبًا", tr: "azab yang dekat" }, { ar: "يَا لَيْتَنِي كُنْتُ تُرَابًا", tr: "Alangkah baiknya jika aku jadi tanah" }], tajwid: [{ text: "إِنَّا", type: "tajwid-ghunnah", info: "Ghunnah Musyaddadah." }, { text: "أَنْذَرْنَاكُمْ", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi (Nun sukun bertemu Dzal)." }, { text: "عَذَابًا قَرِيبًا", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi (Tanwin bertemu Qaf)." }, { text: "قَرِيبًا يَوْمَ", type: "tajwid-idgham", info: "Idgham Bighunnah." }, { text: "كُنْتُ", type: "tajwid-ikhfa", info: "Ikhfa Haqiqi (Nun sukun bertemu Ta)." }] }
+                ]
+            }
+        };
+
+        // Quiz Questions Data (Khusus Surah An-Naba')
+        const quizData = [
+            {
+                q: "1. Apa arti dari nama Surah An-Naba'?",
+                options: ["Hari Kiamat", "Berita Besar", "Gunung Yang Kokoh", "Malaikat Bersaf-saf"],
+                ans: 1
+            },
+            {
+                q: "2. Berapakah jumlah keseluruhan ayat dalam Surah An-Naba'?",
+                options: ["30 Ayat", "38 Ayat", "40 Ayat", "42 Ayat"],
+                ans: 2
+            },
+            {
+                q: "3. Pada ayat ke-6 (أَلَمْ نَجْعَلِ الْأَرْضَ مِهَادًا), hukum tajwid pada kata (نَجْعَلِ) adalah...",
+                options: ["Ghunnah", "Qalqalah Sugra", "Ikhfa Haqiqi", "Izhar Halqi"],
+                ans: 1
+            },
+            {
+                q: "4. Kebanyakan akhir ayat pada Surah An-Naba' dibaca dengan hukum tajwid...",
+                options: ["Mad 'Arid Lissukun", "Mad 'Iwadh", "Mad Badal", "Mad Ja'iz Munfashil"],
+                ans: 1
+            },
+            {
+                q: "5. Apakah ucapan penyesalan orang kafir di akhir Surah An-Naba' (Ayat 40)?",
+                options: ["Andai aku menjadi malaikat", "Alangkah baiknya jika aku dahulu menjadi tanah", "Kembalikan aku ke dunia", "Beri aku waktu sedikit lagi"],
+                ans: 1
+            }
+        ];
+
+        let currentSurahKey = 'naba';
+        let mainAudioObj = null;
+        let isMainAudioPlaying = false;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAllSections();
+            renderQuiz();
+        });
+
+        function changeSurah(key) {
+            currentSurahKey = key;
+            if (mainAudioObj) {
+                mainAudioObj.pause();
+                isMainAudioPlaying = false;
+                updateAudioBtnUI();
+            }
+            renderAllSections();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+
+            document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+            document.getElementById(`section-${tabName}`).classList.remove('hidden');
+        }
+
+        function renderAllSections() {
+            const data = surahData[currentSurahKey];
+
+            // Render Header
+            document.getElementById('surah-title').innerText = data.title;
+            document.getElementById('surah-subtitle').innerText = data.subtitle;
+
+            let bacaHTML = '';
+            let tajwidHTML = '';
+            let hafalanHTML = '';
+
+            data.ayat.forEach((a) => {
+                // Baca Card
+                bacaHTML += `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 space-y-3">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                            <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
+                                ${a.no}
+                            </span>
+                            <span class="text-xs text-slate-400">An-Naba' : Ayat ${a.no}</span>
+                        </div>
+                        <div class="text-right font-arabic text-2xl md:text-3xl font-bold text-slate-800 leading-relaxed">
+                            ${a.arabic}
+                        </div>
+                        <div class="text-xs font-semibold text-emerald-700 italic">${a.latin}</div>
+                        <div class="text-xs text-slate-600">${a.indo}</div>
+
+                        <!-- Kata demi Kata -->
+                        <div class="mt-3 pt-3 border-t border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 block mb-1">Terjemahan Per Kata:</span>
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                ${a.words.map(w => `
+                                    <div class="bg-emerald-50/80 px-2.5 py-1 rounded-lg border border-emerald-100 text-right">
+                                        <span class="font-arabic font-bold text-sm text-emerald-900 block">${w.ar}</span>
+                                        <span class="text-[10px] text-slate-600 block">${w.tr}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Tajwid Card
+                tajwidHTML += `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="w-7 h-7 rounded-full bg-purple-100 text-purple-800 font-bold flex items-center justify-center text-xs">
+                                ${a.no}
+                            </span>
+                            <span class="text-xs text-slate-400">Analisis Tajwid Ayat ${a.no}</span>
+                        </div>
+                        <div class="text-right font-arabic text-2xl font-bold text-slate-800 leading-relaxed">
+                            ${highlightTajwidText(a.arabic, a.tajwid)}
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 justify-end pt-2">
+                            ${a.tajwid.map(t => `
+                                <button onclick="openTajwidModal('${t.text}', '${t.type}', '${t.info}')" class="text-[10px] ${t.type} cursor-pointer hover:opacity-80">
+                                    <i class="fa-solid fa-circle-info"></i> ${t.text}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Hafalan Card
+                hafalanHTML += `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="w-7 h-7 rounded-full bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-xs">
+                                ${a.no}
+                            </span>
+                            <button onclick="toggleSingleBlur('hafalan-text-${a.no}')" class="text-xs text-amber-700 bg-amber-50 px-3 py-1 rounded-lg font-semibold hover:bg-amber-100">
+                                <i class="fa-solid fa-eye"></i> Intip Ayat
+                            </button>
+                        </div>
+                        <div id="hafalan-text-${a.no}" class="hafalan-text text-right font-arabic text-2xl md:text-3xl font-bold text-slate-800 leading-relaxed">
+                            ${a.arabic}
+                        </div>
+                        <div class="text-xs text-slate-500 italic">${a.indo}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('ayat-container').innerHTML = bacaHTML;
+            document.getElementById('tajwid-ayat-container').innerHTML = tajwidHTML;
+            document.getElementById('hafalan-ayat-container').innerHTML = hafalanHTML;
+
+            // Render Asbab & Makhraj
+            document.getElementById('asbab-title').innerText = `Asbab Nuzul ${data.subtitle.split('•')[0]}`;
+            document.getElementById('asbab-content').innerHTML = data.asbab;
+
+            let makhrajTipsHTML = '';
+            data.makhrajTips.forEach((tip, idx) => {
+                makhrajTipsHTML += `
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex gap-3 items-start">
+                        <i class="fa-solid fa-lightbulb text-amber-500 text-lg mt-0.5"></i>
+                        <div>
+                            <h5 class="font-bold text-xs text-slate-800">${tip.title}</h5>
+                            <p class="text-xs text-slate-600 mt-0.5">${tip.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('makhraj-tips-container').innerHTML = makhrajTipsHTML;
+        }
+
+        function highlightTajwidText(arabic, tajwidList) {
+            let res = arabic;
+            tajwidList.forEach(t => {
+                const span = `<span class="${t.type}">${t.text}</span>`;
+                res = res.replace(t.text, span);
+            });
+            return res;
+        }
+
+        function toggleMainAudio() {
+            const data = surahData[currentSurahKey];
+            if (!mainAudioObj) {
+                mainAudioObj = new Audio(data.audioUrl);
+                mainAudioObj.addEventListener('ended', () => {
+                    isMainAudioPlaying = false;
+                    updateAudioBtnUI();
+                });
+            }
+
+            if (isMainAudioPlaying) {
+                mainAudioObj.pause();
+                isMainAudioPlaying = false;
+            } else {
+                mainAudioObj.play();
+                isMainAudioPlaying = true;
+            }
+            updateAudioBtnUI();
+        }
+
+        function updateAudioBtnUI() {
+            const btn = document.getElementById('mainAudioBtn');
+            const icon = document.getElementById('mainAudioIcon');
+            if (isMainAudioPlaying) {
+                btn.classList.replace('bg-amber-400', 'bg-rose-500');
+                btn.classList.replace('text-emerald-950', 'text-white');
+                icon.className = 'fa-solid fa-pause';
+                btn.childNodes[2].nodeValue = ' Jeda Audio Surah An-Naba';
+            } else {
+                btn.classList.replace('bg-rose-500', 'bg-amber-400');
+                btn.classList.replace('text-white', 'text-emerald-950');
+                icon.className = 'fa-solid fa-play';
+                btn.childNodes[2].nodeValue = ' Putar Murottal Surah An-Naba';
+            }
+        }
+
+        function adjustHafalanBlur(val) {
+            const blurAmount = (val / 100) * 8; // max 8px blur
+            document.querySelectorAll('.hafalan-text').forEach(el => {
+                el.style.filter = `blur(${blurAmount}px)`;
+            });
+        }
+
+        function setHafalanPreset(val) {
+            document.getElementById('hafalanBlurSlider').value = val;
+            adjustHafalanBlur(val);
+        }
+
+        function toggleSingleBlur(id) {
+            const el = document.getElementById(id);
+            if (el.style.filter === 'none' || el.style.filter === 'blur(0px)') {
+                el.style.filter = 'blur(6px)';
+            } else {
+                el.style.filter = 'blur(0px)';
+            }
+        }
+
+        function openTajwidModal(text, type, info) {
+            document.getElementById('modalTajwidTitle').innerText = `Hukum Tajwid: ${text}`;
+            document.getElementById('modalTajwidBody').innerHTML = `
+                <div class="p-3 bg-slate-100 rounded-xl font-bold text-center text-sm ${type}">${text}</div>
+                <p class="mt-2">${info}</p>
+            `;
+            document.getElementById('tajwidModal').classList.remove('hidden');
+        }
+
+        function closeTajwidModal() {
+            document.getElementById('tajwidModal').classList.add('hidden');
+        }
+
+        function renderQuiz() {
+            let html = '';
+            quizData.forEach((q, idx) => {
+                html += `
+                    <div class="space-y-2 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                        <p class="font-bold text-xs text-slate-800">${q.q}</p>
+                        <div class="space-y-1.5 pl-2">
+                            ${q.options.map((opt, optIdx) => `
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer hover:text-emerald-700">
+                                    <input type="radio" name="q_${idx}" value="${optIdx}" class="accent-emerald-600">
+                                    <span>${opt}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('quiz-container').innerHTML = html;
+        }
+
+        function evaluateQuiz() {
+            let correct = 0;
+            quizData.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q_${idx}"]:checked`);
+                if (selected && parseInt(selected.value) === q.ans) {
+                    correct++;
+                }
+            });
+
+            const totalScore = Math.round((correct / quizData.length) * 100);
+            document.getElementById('quiz-score-badge').innerText = `Skor: ${totalScore} / 100`;
+            document.getElementById('inputSkor').value = `${totalScore} (${correct} dari ${quizData.length} Benar)`;
+            
+            showToast(`Kuis An-Naba' Selesai! Skor Anda: ${totalScore}`);
+        }
+
+        async function submitDataToGoogleSheet(e) {
+            e.preventDefault();
+
+            const apiUrl = document.getElementById('apiUrlInput').value.trim();
+            if (!apiUrl) {
+                showToast("Harap isi URL Apps Script Web API terlebih dahulu!", true);
+                return;
+            }
+
+            const nama = document.getElementById('inputNama').value.trim();
+            const kelas = document.getElementById('inputKelas').value;
+            const noAbsen = document.getElementById('inputNoAbsen').value;
+            const skor = document.getElementById('inputSkor').value;
+            const refleksi = document.getElementById('inputRefleksi').value.trim();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const statusMsg = document.getElementById('statusMessage');
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Data...`;
+
+            const payload = {
+                nama: nama,
+                kelas: kelas,
+                noAbsen: noAbsen,
+                skor: skor,
+                jumlahBenar: skor.includes('Benar') ? skor : "Belum Kuis",
+                refleksi: refleksi || "-"
+            };
+
+            try {
+                // Apps Script CORS Fetch Request
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                statusMsg.className = "p-3 rounded-xl text-xs font-semibold text-center bg-emerald-100 text-emerald-800 block";
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> Presensi & Nilai An-Naba' Berhasil Terkirim ke Google Sheets!`;
+                
+                // Reset Form
+                document.getElementById('attendanceForm').reset();
+                document.getElementById('inputSkor').value = "Belum Kuis";
+
+            } catch (err) {
+                statusMsg.className = "p-3 rounded-xl text-xs font-semibold text-center bg-rose-100 text-rose-800 block";
+                statusMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Gagal Mengirim Data: ${err.message}`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Presensi & Nilai`;
+            }
+        }
+
+        function showToast(msg, isError = false) {
+            const statusMsg = document.getElementById('statusMessage');
+            statusMsg.className = `p-3 rounded-xl text-xs font-semibold text-center block ${isError ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}`;
+            statusMsg.innerHTML = msg;
+        }
+    </script>
+</body>
+</html>
